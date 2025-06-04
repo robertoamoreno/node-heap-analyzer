@@ -86,18 +86,8 @@ ${detachedNodes.slice(0, 10).map(obj =>
   `- ${obj.name}: ${Math.round((obj.selfSize || 0) / 1024)} KB`
 ).join('\n')}
 
-## Key Observations:
-- 28+ million concatenated strings suggest massive string operations
-- Large JSON objects (35MB each) indicate stencil/template caching issues
-- 1+ million generic objects suggest object lifecycle problems
-- Pattern shows stencil template system with listing marketing data
-
-Based on this Node.js application pattern, likely source files to investigate:
-- src/stencil/ (template processing)
-- src/cache/ (caching logic)
-- src/api/ (API response handling)
-- src/listing/ (listing data processing)
-- src/template/ (template rendering)
+## Key Patterns Observed:
+${this.generateKeyObservations(heapAnalysis)}
 
 Please provide a comprehensive analysis including:
 
@@ -107,7 +97,7 @@ Please provide a comprehensive analysis including:
 4. **RECOMMENDATIONS**: Specific actionable steps to fix the issues with likely file locations
 5. **MONITORING SUGGESTIONS**: What to monitor going forward
 
-Format your response as structured sections with clear headings and bullet points. Be specific about likely source file locations based on the stencil/template/listing patterns observed.`;
+Format your response as structured sections with clear headings and bullet points. Provide generic recommendations about which types of modules to investigate based on the memory patterns observed.`;
   }
 
   parseResponse(response) {
@@ -242,6 +232,56 @@ Based on this comparison data, please provide:
 4. **MONITORING SUGGESTIONS**: What to watch for in future snapshots
 
 Focus on actionable insights about the effectiveness of memory optimizations and areas that still need attention.`;
+  }
+
+  generateKeyObservations(heapAnalysis) {
+    const observations = [];
+    const { stats, leaks, largeObjects, summary } = heapAnalysis;
+    
+    // Analyze string patterns
+    const stringTypes = summary.topNodeTypes.filter(([type]) => 
+      type.toLowerCase().includes('string')
+    );
+    if (stringTypes.length > 0) {
+      const totalStrings = stringTypes.reduce((sum, [, count]) => sum + count, 0);
+      if (totalStrings > 1000000) {
+        observations.push(`- ${(totalStrings / 1000000).toFixed(1)}+ million string objects detected, suggesting intensive string operations`);
+      }
+    }
+    
+    // Analyze large objects
+    if (largeObjects.length > 0) {
+      const avgSize = largeObjects.slice(0, 5).reduce((sum, obj) => 
+        sum + (obj.selfSize || 0), 0) / Math.min(5, largeObjects.length);
+      if (avgSize > 1024 * 1024) {
+        observations.push(`- Large objects averaging ${Math.round(avgSize / 1024 / 1024)}MB each, indicating potential caching or data aggregation issues`);
+      }
+    }
+    
+    // Analyze object proliferation
+    const genericObjects = summary.topNodeTypes.find(([type]) => 
+      type === 'Object' || type === '(object)'
+    );
+    if (genericObjects && genericObjects[1] > 500000) {
+      observations.push(`- ${(genericObjects[1] / 1000000).toFixed(1)}+ million generic objects suggest object lifecycle management issues`);
+    }
+    
+    // Analyze connections
+    if (heapAnalysis.connections && heapAnalysis.connections.length > 100) {
+      observations.push(`- ${heapAnalysis.connections.length} connection-related objects found, worth investigating for proper cleanup`);
+    }
+    
+    // Analyze detached nodes
+    if (heapAnalysis.detachedNodes && heapAnalysis.detachedNodes.length > 0) {
+      observations.push(`- ${heapAnalysis.detachedNodes.length} detached DOM nodes detected, indicating potential DOM manipulation issues`);
+    }
+    
+    // If no specific patterns, add a generic observation
+    if (observations.length === 0) {
+      observations.push('- Heap snapshot shows standard memory usage patterns');
+    }
+    
+    return observations.join('\n');
   }
 
   generateLLMSummary(sections, insights) {

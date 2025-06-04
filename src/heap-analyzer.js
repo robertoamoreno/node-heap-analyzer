@@ -334,7 +334,7 @@ export class HeapAnalyzer {
     
     // Check for large JSON objects
     const largeJsonObjects = largeObjects.filter(obj => 
-      obj.name && obj.name.includes('{"ok":true') && obj.selfSize > 30000
+      obj.name && (obj.name.includes('{') || obj.name.includes('JSON')) && obj.selfSize > 30000
     );
     if (largeJsonObjects.length > 0) {
       criticalIssues.push({
@@ -346,7 +346,7 @@ export class HeapAnalyzer {
       recommendations.push({
         issue: 'Large JSON Response Caching',
         action: 'Implement response pagination, reduce payload size, or add cache expiration',
-        files: 'Check API response handling, caching middleware, and stencil/template services'
+        files: 'Check API response handling, caching middleware, and data processing services'
       });
     }
     
