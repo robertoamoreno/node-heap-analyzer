@@ -1,0 +1,24 @@
+{
+  "name": "node-heap-analyzer",
+  "version": "1.0.0",
+  "description": "AI-powered Node.js heap snapshot analyzer for memory leak detection and optimization",
+  "main": "src/analyzer.js",
+  "type": "module",
+  "scripts": {
+    "analyze": "node src/analyzer.js",
+    "compare": "node src/analyzer.js compare",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@memlab/api": "^1.0.40",
+    "@memlab/core": "^1.0.40",
+    "@anthropic-ai/sdk": "^0.24.3",
+    "commander": "^11.1.0",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
+    "ora": "^7.0.1"
+  },
+  "keywords": ["memory", "leak", "analysis", "heap", "snapshot"],
+  "author": "",
+  "license": "MIT"
+}
