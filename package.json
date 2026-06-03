@@ -18,7 +18,30 @@
     "dotenv": "^16.4.5",
     "ora": "^7.0.1"
   },
-  "keywords": ["memory", "leak", "analysis", "heap", "snapshot"],
-  "author": "",
-  "license": "MIT"
+  "keywords": [
+    "memory-leak",
+    "heap-snapshot",
+    "memory-profiling",
+    "memory-analysis",
+    "memlab",
+    "nodejs",
+    "v8",
+    "performance",
+    "debugging",
+    "cli",
+    "ai",
+    "claude",
+    "anthropic",
+    "llm"
+  ],
+  "author": "Roberto Moreno",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertoamoreno/node-heap-analyzer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/robertoamoreno/node-heap-analyzer/issues"
+  },
+  "homepage": "https://github.com/robertoamoreno/node-heap-analyzer#readme"
 }
